@@ -1,0 +1,14 @@
+#!/bin/bash/
+## script that automate backup and create log file
+# sudo crontab -e
+
+## this will create the log file
+#15 1 * * * /usr/local/bin/backup > /var/log/mybackup-cron.log 2>&1
+#
+#sudo touch /etc/cron.daily/mybackup && sudo chmod +x /etc/cron.daily/mybackup
+
+## What the log file should look like
+# test -x /usr/local/bin/mybackup || exit 0
+# echo -e "*** Log Begin $(date +%Y-%m-%d) ***\n" >> /var/log/mybackup-cron.log
+# /usr/local/bin/mybackup > /var/log/mybackup-cron.log 2>&1
+# echo -e "*** Log End $(date +%Y-%m-%d) *** \n" >> /var/log/mybackup-cron.log#

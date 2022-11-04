@@ -1,0 +1,47 @@
+#!/bin/bash/
+# makes a complete backup of Apache
+# and MySQL server
+
+## Get the current dat as variable
+TODAY = "$(date +%Y-%m-%d)"
+CREATE_DIR = "sudo mkdir /var/backup/"
+
+## check if backup directory exist if not make one
+if [ ! -d "/var/backup" ]; then
+  echo "Directory /var/backup/ DOES NOT exist."
+  echo "Now creating directory /var/backup/..."
+  $CREATE_DIR
+fi
+
+## Delete backup files older than 2 weeks before creating the new one
+find /var/backup/ -mtime +14 -type f -delete
+
+## MySQl Section. The first line is if you are using 'mysqldump',
+## the next line is for 'automysqlbackup'. Currently using both.
+mysqldump -u'root' -p'<my-pwd>' -- all-databases | gzip > /var/backup/mysql-all-db.sql.gz
+automysqlbackup
+
+## Tar Section. Creat a backup file, with the current date in its name.
+## Add -h to convert the symbolic links into a regular files.
+## Backup some system files, also the entire '/home' directory, etc.
+## --exclude some directories, e.g. the browser's cache, .bash_history, etc.
+tar zcvf "/var/backup/my_backup-$TODAY.tgz"
+/etc/hosts /etc/sudoers* /var/spool/cron/crontabs /etc/cron* \
+/etc/apache2 /etc/letsencrypt /etc/php/7.2/apache2/php.ini \
+/etc/phpmyadmin/apache.conf /etc/mysql/debian.cnf \
+/etc/ssh/sshd_config* /etc/pam.d/sshd \
+/usr/local/bin \
+/var/backup/mysql-all-db.sql.gz /var/lib/automysqlbackup/latest/*.sql.gz \
+/root \
+/home \
+/var/www \
+--exclude=/home/<some-user>/.composer --exclude=/home/<some-user>/.npm
+
+## MySQL Section - remove the DB backup files, if you want:
+# rm /var/lib/automysqlbackup/latest*.sql.gz
+rm /var/backup/mysql-all-db.sql.gz
+
+## If it is VPS you access through web 
+# rm /var/www/html/*
+# 7za a -tzip -p'<passphrasw> mem=AES256 "/var/ww/html/my-backup-$TODAY.tgz.7z"
+# "/var/backup/my-backup-$TODAY.tgz" '

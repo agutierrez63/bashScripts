@@ -1,0 +1,23 @@
+#!/bin/bash
+## disable the caplock key
+
+#echo $DISPLAY
+## No point in setting xmodmap if there's no display
+if [ "^$DISPLAY^" = '^^' ]
+then
+		exit
+fi
+
+## Check to see we haven't already done it.
+ISDEFINED=`xmodmap | grep Caps_Lock | cut -d" " -f1`
+ISDEFINED="^$ISDEFINED^"
+
+#echo "$ISDEFINED"
+
+if [  $ISDEFINED = '^lock^' ]
+then
+    xmodmap $HOME/.Xmodmap
+	echo "Caplock cleaned"
+else
+	/usr/games/fortune
+fi

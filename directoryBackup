@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# The line below will store multiple folders in an array (files)
+files=( "/home/$USER/Documents" "/home/$USER/bin"
+"/home/$USER/public_html" )
+day=$(date +%A)
+timestamp=$(date +%Y_%m_%d)
+hostname=$(hostname -s)
+archive_file="$hostname-$day-$timestamp.tgz"
+DIRECTORY="/home/$USER/Downloads/Snapshot/"
+
+function start_backup {
+  for i in "${files[@]}"  # For every line in FILES
+  do # Do the following, starting with the first one:
+    # Print start status message.
+    echo "Backing up $i to $DIRECTROY/$archive_file"  # Here, $i will be the first directory
+    date
+    echo
+
+    # Backup the files using tar.
+    sudo tar czf $DIRECTROY/$archive_file $i # Again, $i is the directory    
+  done # Stop here and do the loop again with the next item in FILES
+
+  # Print end status message.
+  echo
+  echo "Backup finished"
+}
+
+if [ ! -d "$DIRECTORY" ]; then
+  echo "Error: Directory $DIRECTORY does not exists."
+  echo "CREATING: $DIRECTORY..."
+  sleep 3
+  mkdir $DIRECTORY
+  start_backup
+
+else
+  start_backup
+fi
