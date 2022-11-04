@@ -1,2 +1,2 @@
 # bashScripts
-usefule bash scripts for linux based systems
+Useful bash scripts for linux based systems
